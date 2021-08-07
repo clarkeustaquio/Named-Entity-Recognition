@@ -1,0 +1,52 @@
+
+{% load bootstrap5 %}
+
+<html>
+    <head>
+        <title>Named Entity</title>
+        {% bootstrap_css %}
+        {% bootstrap_javascript %}
+    </head>
+    <body>
+        <nav class="navbar navbar-light bg-light">
+            <div class="container">
+                <span class="navbar-brand mb-0 h1">Named Entity Recognition</span>
+            </div>
+        </nav>
+
+        <main class="container mt-5">
+            {% for message in messages %}
+                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                     {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+            <form action="{% url 'search_entity:upload_file' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="input-group mb-3">
+                    <input accept=".pdf" type="file" class="form-control" name="file_upload" required>
+                    <button type="submit" class="input-group-text" for="inputGroupFile02">Upload</button>
+                </div>
+            </form>
+            <hr>
+
+            <form action="{% url 'search_entity:search_entity' %}" class="mt-4 mb-5" method="POST">
+                {% csrf_token %}
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="Search" name="search" required>
+                    <button class="btn btn-outline-secondary" type="submit">Search</button>
+                </div>
+            </form>
+
+            <h5>Search Results</h5>
+            <hr>
+            <ul class="list-group">
+                {% for suggestion in suggestions %}
+                    <li class="list-group-item">{{ suggestion.file_name }} <a class="float-end" href="{{ suggestion.file.url }}"download>Download<a/></li>
+                {% empty %}
+                    <h5 class="text-center">No search results found.<h5>
+                {% endfor %}
+            </ul>
+        </main>
+    </body>
+</html>
